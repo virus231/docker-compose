@@ -4,11 +4,13 @@ services:
     image: "mongo"
     volumes:
       - data:/data/db
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: vlad
-#      MONGO_INITDB_ROOT_PASSWORD: secret
+    #    environment:
+    #      MONGO_INITDB_ROOT_USERNAME: vlad
+    #      MONGO_INITDB_ROOT_PASSWORD: secret
     env_file:
       - ./env/mongo.env
+    environment:
+      NODE_OPTIONS: --openssl-legacy-provider
   backend:
     build: ./backend
     # build:
@@ -24,8 +26,21 @@ services:
       - ./env/backend.env
     depends_on:
       - mongodb
+    environment:
+      NODE_OPTIONS: --openssl-legacy-provider
 
-#  frontend:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    environment:
+      NODE_OPTIONS: --openssl-legacy-provider
 
 volumes:
   data:
